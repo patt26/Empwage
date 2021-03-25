@@ -1,45 +1,49 @@
 #!/bin/bash -x
 
+IS_FULL_TIME=1
+IS_PART_TIME=2
+EMP_RATE_PER_HR=20
+MAX_HRS_IN_MONTH=50
+NUM_WORKING_DAYS=20
 
 
-fullT=1
-partT=2
-emprhr=20
-maxemphr=50
-numworkdays=20
+totalEmpHrs=0
+totalWorkingDays=0
 
-# variables
-totalemphr=0
-totalworkingdays=0
-
-function getworkingHrs() {
-case $1 in
-        $fullT)
-                workhrs=8
-                ;;
-        $partT)
-                workhrs=4
-                ;;
-        *)
-                workhrs=0
-                ;;
-        esac
-        echo $workhrs
+function getWorkingHrs() {
+	case $1 in
+      $IS_FULL_TIME)
+         workHrs=8
+      ;;
+      $IS_PART_TIME)
+         workHrs=4
+      ;;
+      *)
+         workHrs=0
+      ;;
+   esac
+	echo $workHrs
 }
 
+function calDailyWage() {
+	local workHrs=$1
+	wage=$(($workHrs*$EMP_RATE_PER_HR))
+	echo $wage
+}
 
-while [[ $totalemphr -lt $maxemphr && $totalworkingdays -lt $numworkdays ]]
+while [[ $totalEmpHrs -lt $MAX_HRS_IN_MONTH && $totalWorkingDays -lt $NUM_WORKING_DAYS ]]
 do
-    ((totalworkingdays++))
-    workhrs="$( getworkingHrs $((RANDOM%3)) )"
-    totalemphr=$(($totalemphr+$workhrs))
-
-    totalemphr=$(($totalemphr+$workhrs))
+	((totalWorkingDays++))
+	workHrs="$( getWorkingHrs $((RANDOM%3)) )"
+	totalEmpHrs=$(($totalEmpHrs+$workHrs))
+	dailyWage[$totalWorkingDays]=$( calDailyWage $workHrs )
 done
-     Totalsalary=$(($totalemphr*$emprhr))
-    
 
-	echo "Total Salary of Employee is = $Totalsalary"
+totalSalary=$(($EMP_RATE_PER_HR*$totalEmpHrs))
+echo $totalSalary
+echo "Daily Wage : "${dailyWage[@]}
+echo "Day : "${!dailyWage[@]}
+
 
 
 
